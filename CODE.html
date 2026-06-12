@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Country Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-blue-50 min-h-screen p-8">
+    <div class="max-w-lg mx-auto">
+      <h1 class="text-2xl font-bold text-center mb-2">Where Are You From?</h1>
+      <p class="text-center text-gray-500 mb-6">Select your country below</p>
+
+      <select id="country" class="w-full border rounded p-2">
+        <option value="">— select your country —</option>
+      </select>
+
+      <button id="vote-btn" onclick="addVote()" class="w-full bg-blue-500 text-white rounded p-2 mt-4">
+        Add my country
+      </button>
+
+      <p id="thanks" class="text-green-500 mt-4 hidden">Thanks for voting!</p>
+      <div id="bars" class="mt-6"></div>
+    </div>
+
+    <script>
+      let saved = localStorage.getItem('votes');
+      let votes = saved ? JSON.parse(saved) : {};
+      let hasVoted = localStorage.getItem('hasVoted') === 'true';
+
+      let countries = [
+        ['ae', 'United Arab Emirates'],
+        ['af', 'Afghanistan'],
+        ['ao', 'Angola'],
+        ['ar', 'Argentina'],
+        ['at', 'Austria'],
+        ['au', 'Australia'],
+        ['az', 'Azerbaijan'],
+        ['bd', 'Bangladesh'],
+        ['be', 'Belgium'],
+        ['bf', 'Burkina Faso'],
+        ['bi', 'Burundi'],
+        ['bj', 'Benin'],
+        ['bo', 'Bolivia'],
+        ['br', 'Brazil'],
+        ['by', 'Belarus'],
+        ['ca', 'Canada'],
+        ['cd', 'Democratic Republic of the Congo'],
+        ['ch', 'Switzerland'],
+        ['ci', 'Ivory Coast'],
+        ['cl', 'Chile'],
+        ['cm', 'Cameroon'],
+        ['cn', 'China'],
+        ['co', 'Colombia'],
+        ['cu', 'Cuba'],
+        ['cz', 'Czech Republic'],
+        ['de', 'Germany'],
+        ['do', 'Dominican Republic'],
+        ['dz', 'Algeria'],
+        ['ec', 'Ecuador'],
+        ['eg', 'Egypt'],
+        ['es', 'Spain'],
+        ['et', 'Ethiopia'],
+        ['fr', 'France'],
+        ['gh', 'Ghana'],
+        ['gn', 'Guinea'],
+        ['gr', 'Greece'],
+        ['gt', 'Guatemala'],
+        ['hn', 'Honduras'],
+        ['ht', 'Haiti'],
+        ['hu', 'Hungary'],
+        ['id', 'Indonesia'],
+        ['il', 'Israel'],
+        ['in', 'India'],
+        ['iq', 'Iraq'],
+        ['ir', 'Iran'],
+        ['it', 'Italy'],
+        ['jo', 'Jordan'],
+        ['jp', 'Japan'],
+        ['ke', 'Kenya'],
+        ['kh', 'Cambodia'],
+        ['kp', 'North Korea'],
+        ['kr', 'South Korea'],
+        ['kz', 'Kazakhstan'],
+        ['lk', 'Sri Lanka'],
+        ['ma', 'Morocco'],
+        ['mg', 'Madagascar'],
+        ['ml', 'Mali'],
+        ['mm', 'Myanmar'],
+        ['mw', 'Malawi'],
+        ['mx', 'Mexico'],
+        ['my', 'Malaysia'],
+        ['mz', 'Mozambique'],
+        ['ne', 'Niger'],
+        ['ng', 'Nigeria'],
+        ['nl', 'Netherlands'],
+        ['np', 'Nepal'],
+        ['pe', 'Peru'],
+        ['pg', 'Papua New Guinea'],
+        ['ph', 'Philippines'],
+        ['pk', 'Pakistan'],
+        ['pl', 'Poland'],
+        ['pt', 'Portugal'],
+        ['ro', 'Romania'],
+        ['rs', 'Serbia'],
+        ['ru', 'Russia'],
+        ['rw', 'Rwanda'],
+        ['sa', 'Saudi Arabia'],
+        ['sd', 'Sudan'],
+        ['se', 'Sweden'],
+        ['sn', 'Senegal'],
+        ['so', 'Somalia'],
+        ['ss', 'South Sudan'],
+        ['sy', 'Syria'],
+        ['sz', 'Eswatini'],
+        ['td', 'Chad'],
+        ['th', 'Thailand'],
+        ['tj', 'Tajikistan'],
+        ['tn', 'Tunisia'],
+        ['tr', 'Turkey'],
+        ['tz', 'Tanzania'],
+        ['ua', 'Ukraine'],
+        ['ug', 'Uganda'],
+        ['uk', 'United Kingdom'],
+        ['us', 'United States'],
+        ['uz', 'Uzbekistan'],
+        ['ve', 'Venezuela'],
+        ['vn', 'Vietnam'],
+        ['ye', 'Yemen'],
+        ['za', 'South Africa'],
+        ['zm', 'Zambia'],
+        ['zw', 'Zimbabwe']
+      ];
+
+      let names = {
+        us: 'United States',
+        ca: 'Canada',
+        uk: 'United Kingdom',
+        au: 'Australia',
+        de: 'Germany',
+        jp: 'Japan'
+      };
+      let select = document.getElementById('country');
+
+      countries.forEach(([code, name]) => {
+        names[code] = name;
+        let option = document.createElement('option');
+        option.value = code;
+        option.textContent = name;
+        select.appendChild(option);
+      });
+
+      function addVote() {
+        if (hasVoted) return;
+
+        let country = document.getElementById('country').value;
+        if (!country) return;
+
+        hasVoted = true;
+        localStorage.setItem('hasVoted', 'true');
+
+        document.getElementById('thanks').classList.remove('hidden');
+        document.getElementById('country').classList.add('hidden');
+        document.getElementById('vote-btn').classList.add('hidden');
+
+        votes[country] = (votes[country] || 0) + 1;
+        localStorage.setItem('votes', JSON.stringify(votes));
+        updateBars();
+      }
+
+      function updateBars() {
+        let barsContainer = document.getElementById('bars');
+        barsContainer.innerHTML = '';
+
+        for (let [country, count] of Object.entries(votes)) {
+          let bar = document.createElement('div');
+          bar.className = 'bg-blue-500 text-white p-2 rounded mb-2';
+          let label = names[country] || country;
+          bar.textContent = `${label}: ${count}`;
+          barsContainer.appendChild(bar);
+        }
+      }
+
+      if (hasVoted) {
+        document.getElementById('country').classList.add('hidden');
+        document.getElementById('vote-btn').classList.add('hidden');
+        document.getElementById('thanks').classList.remove('hidden');
+      }
+
+      updateBars();
+    </script>
+  </body>
+</html>
